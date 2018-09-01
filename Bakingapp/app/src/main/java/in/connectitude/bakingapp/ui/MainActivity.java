@@ -55,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(findViewById(R.id.mainActivityTwoPane)!=null){
+            mainListRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),2));
                 tablet = true;
         }else{
+            mainListRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             tablet = false;
         }
 
