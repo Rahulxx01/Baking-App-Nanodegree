@@ -17,6 +17,8 @@ import butterknife.ButterKnife;
 import in.connectitude.bakingapp.R;
 import in.connectitude.bakingapp.model.Steps;
 import in.connectitude.bakingapp.ui.RecipeDetails;
+import in.connectitude.bakingapp.ui.RecipeIngredientDescriptionFragment;
+import in.connectitude.bakingapp.ui.RecipeStepDescriptionActivity;
 import in.connectitude.bakingapp.ui.RecipeStepDescriptionFragment;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsCardViewHolder> {
@@ -103,6 +105,8 @@ String name;
                     Intent intent = null;
                     if (tablet) {
 
+
+
                         RecipeStepDescriptionFragment recipeStepDescriptionFragment = new RecipeStepDescriptionFragment();
                         Bundle fragmentBundle = new Bundle();
 
@@ -118,10 +122,11 @@ String name;
 
 
                     } else {
-                        intent = new Intent(view.getContext(), RecipeDetails.class);
+                        intent = new Intent(view.getContext(), RecipeStepDescriptionActivity.class);
                         intent.putExtra("step_description", "step_description");
                         intent.putExtra("description", mListItems.get(position).getDescription());
                         intent.putExtra("videoURL", mListItems.get(position).getVideoURL());
+                        intent.putExtra("name", name);
 
                         // intent.putParcelableArrayListExtra("recipe_ingredients",  recipeList.get(position).getIngredients());
                         //intent.putExtra("recipe_steps", (Serializable) recipeList.get(position).getSteps());

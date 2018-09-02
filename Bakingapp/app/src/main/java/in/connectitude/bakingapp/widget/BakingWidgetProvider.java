@@ -28,7 +28,10 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
     RemoteViews views;
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    String name = "Ingredients:";
+    String ingredients = "Ingredients";
+
+   /* static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
        // CharSequence widgetText = context.getString(R.string.appwidget_text);
@@ -42,13 +45,20 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
-    }
+    }*/
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+
+            views = new RemoteViews(context.getPackageName(),R.layout.baking_widget_provider );
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+
+            Intent configIntent = new Intent(context, MainActivity.class);
+            PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+            views.setOnClickPendingIntent(R.id.ingredientsList_widget, configPendingIntent);
+            //updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
@@ -72,20 +82,20 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0);
         views.setOnClickPendingIntent(R.id.ingredientsList_widget, pendingIntent);
 
-        views.setTextViewText(R.id.ingredients_name, getName(context));
-        views.setTextViewText(R.id.ingredientsList_widget, getIngredients(context));
-       /* List<Ingredient> ingredientList = getRecipe(context).getIngredients();
-        StringBuilder builder = new StringBuilder();
-        int pos = 1;
-        for (Ingredient currentIngredients : ingredientList) {
-            builder.append(pos).append(".").append(currentIngredients.getIngredient()).append(" ").append(currentIngredients.getQuantity()).append(" ").append(currentIngredients.getMeasure()).append("\n");
-            pos++;
+        if(getName(context)==null){
+            views.setTextViewText(R.id.ingredients_name, name);
+
+
+        }else{
+            views.setTextViewText(R.id.ingredients_name, getName(context));
+        }
+        if(getIngredients(context)==null){
+            views.setTextViewText(R.id.ingredientsList_widget, ingredients);
+        }else{
+            views.setTextViewText(R.id.ingredientsList_widget, getIngredients(context));
         }
 
-        views.setTextViewText(R.id.ingredients_text_wgt, builder.toString());*/
 
-       // Log.i("IngredientWidget", "onReceive: " + builder.toString());
-        //Now update all widgets
         AppWidgetManager.getInstance(context).updateAppWidget(
                 new ComponentName(context, BakingWidgetProvider.class), views);
 

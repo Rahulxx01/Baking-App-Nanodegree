@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragmentContainerTablet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="32dp"
     android:background="@color/colorPrimary"
-
+    android:paddingBottom="32dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.RecipeDetails"
     tools:showIn="@layout/activity_recipe_details">
@@ -31,79 +28,12 @@
                 android:orientation="vertical">
 
 
-              <!--  <android.support.v7.widget.CardView
+                <FrameLayout
+                    android:id="@+id/recipeIngredientsContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:elevation="100dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp">
+                    android:layout_height="170dp">
 
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-
-                        <TextView
-                            android:id="@+id/ingredients"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="16dp"
-                            android:fontFamily="sans-serif-condensed"
-                            android:text="Ingredients:"
-                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                            android:textColor="@color/colorAccent"
-                            android:textStyle="bold" />
-
-
-                        <TextView
-                            android:id="@+id/ingredientsList"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:layout_marginLeft="16dp"
-                            android:fontFamily="sans-serif-smallcaps"
-                            android:text="Ingredients"
-                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                            android:textColor="@color/white" />
-
-
-                        <android.support.design.widget.FloatingActionButton
-                            android:id="@+id/widgetButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|end"
-                            android:layout_margin="@dimen/fab_margin"
-                            app:srcCompat="@drawable/ic_widget_white" />
-
-
-                    </LinearLayout>
-
-
-                </android.support.v7.widget.CardView>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="Steps"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:textColor="@color/colorAccent"
-                    android:textStyle="bold" />
-
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="#FFFFFF" />-->
+                </FrameLayout>
 
 
                 <android.support.v7.widget.RecyclerView
@@ -135,4 +65,4 @@
     </LinearLayout>
 
 
-</ScrollView>
+</FrameLayout>

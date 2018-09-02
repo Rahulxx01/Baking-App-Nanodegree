@@ -1,31 +1,36 @@
 package in.connectitude.bakingapp.ui;
 
-import android.content.SharedPreferences;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.connectitude.bakingapp.R;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class RecipeStepDescriptionFragment extends Fragment {
@@ -43,13 +48,24 @@ public class RecipeStepDescriptionFragment extends Fragment {
     @BindView(R.id.ingredientsListStepDescription)
     TextView ingredientsListStepDescription;
 
+    private static final String SAVED_INSTANCE_POSITION = "position";
+    private static final String SAVED_PLAYBACK_POSITION = "playback_position";
+    private static final String SAVED_PLAYBACK_WINDOW = "current_window";
+    private static final String SAVED_PLAY_WHEN_READY = "play_when_ready";
 
-    @BindView(R.id.widgetButtonStepDescription)
-    FloatingActionButton widgetButton;
-
+    private int currentStepPosition;
+    private long playbackPosition = 0;
+    private int currentWindow = 0;
+    private boolean playWhenReady = true;
 
 
     private SimpleExoPlayer player;
+
+    //Long position;
+    //Boolean playWhenReady;
+
+    //Long playbackPosition;
+
 
     private static final String TAG = "StepDetail";
 
@@ -64,9 +80,23 @@ public class RecipeStepDescriptionFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+
+        // Inflate the layout for this fragment
+
+        ViewModelProviders.of(this).get(StepPresenterViewModel.class);
+        View rootView = inflater.inflate(R.layout.fragment_recipe_step_description, container, false);
+        ButterKnife.bind(this, rootView);
 
         if (getArguments() != null) {
             videoUrl = getArguments().getString("videoURL");
@@ -74,98 +104,127 @@ public class RecipeStepDescriptionFragment extends Fragment {
             tablet = getArguments().getBoolean("tablet");
             ingredients = getArguments().getString("ingredients");
             name = getArguments().getString("name");
-
-            //recipeList = (List<Steps>) getArguments().getSerializable("recipe_steps");*/
         }
+
+        if (savedInstanceState != null){
+            currentStepPosition = savedInstanceState.getInt(SAVED_INSTANCE_POSITION, 0);
+            playbackPosition = savedInstanceState.getLong(SAVED_PLAYBACK_POSITION, 0);
+            currentWindow = savedInstanceState.getInt(SAVED_PLAYBACK_WINDOW, 0);
+            playWhenReady = savedInstanceState.getBoolean(SAVED_PLAY_WHEN_READY, false);
+
+        }
+
+        stepDescription.setText(longDescription);
+        ingredientsCardSteps.setVisibility(View.GONE);
+
+
+
+        return rootView;
     }
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    private void initViews() {
 
-
-        View rootView = inflater.inflate(R.layout.fragment_recipe_step_description, container, false);
-        ButterKnife.bind(this, rootView);
-
-        stepDescription.setText(longDescription);
-
-        if(!tablet){
-            ingredientsCardSteps.setVisibility(View.GONE);
-        }else{
-            ingredientsListStepDescription.setText(ingredients);
-        }
-
-
-        if (videoUrl!=null) {
-            playerView.setVisibility(View.VISIBLE);
-            if(videoUrl.equals("")){
-                playerView.setVisibility(View.GONE);
-            }else{
-                player = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
-                playerView.setPlayer(player);
-                DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "exo-demo"));
-                ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(videoUrl));
-                player.prepare(mediaSource);
-                player.setPlayWhenReady(true);
-
-            }
-
-
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+           // hideSystemUi();
         } else {
-            playerView.setVisibility(View.GONE);
-            // stepDetailTxt.append("Video tutorial for this step will be uploaded soon. Check again after you are done with the cooking and the eating part as well :) .");
+
+
+                stepDescription.setText(longDescription);
+                ingredientsCardSteps.setVisibility(View.GONE);
+
         }
 
-        if (savedInstanceState != null && player != null) {
-            player.seekTo(savedInstanceState.getLong("current_position"));
-            player.setPlayWhenReady(savedInstanceState.getBoolean("play_state"));
-        }
-
-        widgetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("INGREDIENTS",MODE_PRIVATE).edit();
-                editor.putString("ingredients",ingredients);
-                editor.putString("name",name);
-                editor.commit();
-                Toast.makeText(getContext(),"Widget Added to Home Screen",Toast.LENGTH_SHORT).show();
-            }
-        });
-        return rootView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
+        if (Util.SDK_INT > 23) {
+            initViews();
+            initializePlayer();
+        }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (player != null) {
-            outState.putLong("current_position", player.getCurrentPosition());
-            outState.putBoolean("play_state", player.getPlayWhenReady());
+    public void onResume() {
+        super.onResume();
+
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            initViews();
+            initializePlayer();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.i(TAG, "onStop:called ");
-        playerView.setPlayer(null);
-        if (player != null)
+        if (player != null) {
+            releasePlayer();
+        }
+    }
+
+    private void initializePlayer(){
+        if (player == null) {
+            player = ExoPlayerFactory.newSimpleInstance(
+                    new DefaultRenderersFactory(getContext()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+
+            playerView.setPlayer(player);
+            player.setPlayWhenReady(playWhenReady);
+            MediaSource mediaSource = buildMediaSource();
+            player.prepare(mediaSource, true, false);
+            player.seekTo(currentWindow, playbackPosition);
+        }
+    }
+
+
+    private void releasePlayer(){
+        if (player != null){
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
             player.release();
+            player = null;
+        }
+    }
+
+    private MediaSource buildMediaSource() {
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("exoplayer-baking-app"))
+                .createMediaSource(Uri.parse(videoUrl));
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy:called ");
-        playerView.setPlayer(null);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SAVED_INSTANCE_POSITION, currentStepPosition);
+        outState.putLong(SAVED_PLAYBACK_POSITION, playbackPosition);
+        outState.putInt(SAVED_PLAYBACK_WINDOW, currentWindow);
+        outState.putBoolean(SAVED_PLAY_WHEN_READY, playWhenReady);
 
+    }
+
+    private void hideSystemUi() {
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) playerView.getLayoutParams();
+        params.width = params.MATCH_PARENT;
+        params.height = params.MATCH_PARENT;
+        playerView.setLayoutParams(params);
     }
 
 

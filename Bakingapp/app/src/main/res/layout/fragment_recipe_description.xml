@@ -58,7 +58,7 @@
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="Ingredients"
                             android:textColor="@color/white"
-                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                           android:textSize="16dp" />
 
 
                         <android.support.design.widget.FloatingActionButton
@@ -78,6 +78,7 @@
 
 
                 <TextView
+                    android:id="@+id/steps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"

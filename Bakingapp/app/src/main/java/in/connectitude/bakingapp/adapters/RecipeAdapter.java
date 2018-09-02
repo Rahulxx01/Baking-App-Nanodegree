@@ -3,6 +3,7 @@ package in.connectitude.bakingapp.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import in.connectitude.bakingapp.model.Recipe;
 import in.connectitude.bakingapp.model.RecipeCard;
 import in.connectitude.bakingapp.ui.RecipeDetails;
 import in.connectitude.bakingapp.ui.RecipeDetailsTablet;
+import in.connectitude.bakingapp.ui.RecipeIngredientDescriptionFragment;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeCardViewHolder> {
 
@@ -106,8 +108,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeCard
                     Intent intent = null;
                     if(tablet){
                         intent = new Intent(view.getContext(), RecipeDetailsTablet.class);
+
                     }else{
                       intent = new Intent(view.getContext(), RecipeDetails.class);
+
+
                     }
 
                     intent.putExtra("recipe_name", recipeList.get(position).getName());
@@ -115,9 +120,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeCard
                     bundle.putSerializable("recipe_ingredients", (Serializable) recipeList.get(position).getIngredients());
                     bundle.putSerializable("recipe_steps", (Serializable) recipeList.get(position).getSteps());
                     intent.putExtras(bundle);
-                   // intent.putParcelableArrayListExtra("recipe_ingredients",  recipeList.get(position).getIngredients());
+                    // intent.putParcelableArrayListExtra("recipe_ingredients",  recipeList.get(position).getIngredients());
                     //intent.putExtra("recipe_steps", (Serializable) recipeList.get(position).getSteps());
                     context.startActivity(intent);
+
+
 
                 }
             });

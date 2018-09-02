@@ -36,7 +36,11 @@
                 android:resource="@xml/baking_widget_provider_info" />
         </receiver>
 
-        <activity android:name=".ui.RecipeDetailsTablet"></activity>
+        <activity android:name=".ui.RecipeDetailsTablet" />
+        <activity
+            android:name=".ui.RecipeStepDescriptionActivity"
+            android:label="@string/title_activity_recipe_step_description"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
