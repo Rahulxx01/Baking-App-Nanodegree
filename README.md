@@ -1,5 +1,8 @@
 # Baking-App-Nanodegree
 
+Check the given rubric for requirments to be implemented :
+https://review.udacity.com/#!/rubrics/829/view
+
 The Objective on the project is to implement.
 
 1.Use MediaPlayer/Exoplayer to display videos.
